@@ -1,4 +1,4 @@
-Terraform `waPC` Provider
+Terraform [`waPC`](https://github.com/wapc) Provider
 ==============================
 
 Requirements
