@@ -1,6 +1,6 @@
 TEST?=./...
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-PKG_NAME=get
+PKG_NAME=wapc
 
 default: build
 

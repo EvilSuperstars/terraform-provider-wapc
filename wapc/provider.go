@@ -11,6 +11,8 @@ func Provider() *schema.Provider {
 
 		ResourcesMap: map[string]*schema.Resource{},
 
-		DataSourcesMap: map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"wapc_module": dataSourceWapcModule(),
+		},
 	}
 }
