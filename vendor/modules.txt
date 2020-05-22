@@ -1,3 +1,5 @@
+# github.com/Workiva/go-datastructures v1.0.52
+github.com/Workiva/go-datastructures/queue
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
 # github.com/apparentlymart/go-textseg v1.0.0
@@ -60,9 +62,15 @@ github.com/mitchellh/mapstructure
 github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
+# github.com/pkg/errors v0.9.1
+github.com/pkg/errors
 # github.com/vmihailenco/msgpack v4.0.1+incompatible
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
+# github.com/wapc/wapc-go v0.1.0
+github.com/wapc/wapc-go
+# github.com/wasmerio/go-ext-wasm v0.3.1
+github.com/wasmerio/go-ext-wasm/wasmer
 # github.com/zclconf/go-cty v1.2.1
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert

@@ -2,12 +2,14 @@ package wapc
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
-	"os"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/wapc/wapc-go"
 )
 
 func dataSourceWapcModule() *schema.Resource {
@@ -39,26 +41,33 @@ func dataSourceWapcModule() *schema.Resource {
 }
 
 func dataSourceWapcModuleReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// src := d.Get("url").(string)
-
-	tmpDir, err := ioutil.TempDir("", "gg")
+	src := d.Get("filename").(string)
+	code, err := ioutil.ReadFile(src)
 	if err != nil {
-		return []diag.Diagnostic{diag.FromErr(err)}
+		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error reading WebAssembly code (%s): %w", src, err))}
 	}
-	defer os.RemoveAll(tmpDir)
 
-	// dst := path.Join(tmpDir, "gg.dat")
-	// if err := gg.GetFile(dst, src); err != nil {
-	// 	return err
-	// }
+	module, err := wapc.New(func(msg string) {log.Printf("%s", msg)}, code, wapc.NoOpHostCallHandler)
+	if err != nil {
+		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error compiling WebAssembly module: %w", err))}
+	}
+	defer module.Close()
 
-	// bytes, err := ioutil.ReadFile(dst)
-	// if err != nil {
-	// 	return err
-	// }
+	instance, err := module.Instantiate()
+	if err != nil {
+		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error instantiating WebAssembly module: %w", err))}
+	}
+	defer instance.Close()
+
+	operation := d.Get("operation").(string)
+	payload := []byte(d.Get("input").(string))
+	result, err := instance.Invoke(ctx, operation, payload)
+	if err != nil {
+		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error invoking WebAssembly operation (%s): %w", operation, err))}
+	}
 
 	d.SetId(time.Now().UTC().String())
-	// d.Set("content", string(bytes))
+	d.Set("result", string(result))
 
 	return nil
 }
