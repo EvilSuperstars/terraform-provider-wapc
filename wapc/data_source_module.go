@@ -47,7 +47,7 @@ func dataSourceWapcModuleReadContext(ctx context.Context, d *schema.ResourceData
 		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error reading WebAssembly code (%s): %w", src, err))}
 	}
 
-	module, err := wapc.New(func(msg string) {log.Printf("%s", msg)}, code, wapc.NoOpHostCallHandler)
+	module, err := wapc.New(func(msg string) { log.Printf("%s", msg) }, code, wapc.NoOpHostCallHandler)
 	if err != nil {
 		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error compiling WebAssembly module: %w", err))}
 	}
