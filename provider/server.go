@@ -9,10 +9,14 @@ import (
 )
 
 // grpcProviderServer implements the Protobuf ProviderServer interface.
-type grpcProviderServer struct {}
+type grpcProviderServer struct {
+	stopCh chan struct{}
+}
 
 func NewGRPCProviderServer() tfplugin5.ProviderServer {
-	return &grpcProviderServer{}
+	return &grpcProviderServer{
+		stopCh: make(chan struct{}),
+	}
 }
 
 //////// Information about what a provider supports/expects
@@ -67,6 +71,9 @@ func (s *grpcProviderServer) ReadDataSource(ctx context.Context, req *tfplugin5.
 
 //////// Graceful Shutdown
 
-func (s *grpcProviderServer) Stop(ctx context.Context, req *tfplugin5.Stop_Request) (*tfplugin5.Stop_Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::Stop not implemented")
+func (s *grpcProviderServer) Stop(_ context.Context, _ *tfplugin5.Stop_Request) (*tfplugin5.Stop_Response, error) {
+	close(s.stopCh)
+	s.stopCh = make(chan struct{})
+
+	return &tfplugin5.Stop_Response{}, nil
 }
