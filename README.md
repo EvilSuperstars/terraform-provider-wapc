@@ -5,7 +5,7 @@ Requirements
 ------------
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.12+
--	[Go](https://golang.org/doc/install) 1.13 (to build the provider plugin)
+-	[Go](https://golang.org/doc/install) 1.14 (to build the provider plugin)
 
 Building The Provider
 ---------------------
@@ -30,7 +30,7 @@ Run acceptance tests
 
 ```sh
 $ cd $HOME/development/EvilSuperstars/terraform-provider-wapc
-$ make testacc TEST=./get/ TESTARGS='-run=TestDataSource_'
+$ make testacc TEST=./wapc/ TESTARGS='-run=TestDataSourceWapcModule_'
 ```
 
 Using The Provider

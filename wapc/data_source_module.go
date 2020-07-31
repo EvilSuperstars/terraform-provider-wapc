@@ -2,7 +2,6 @@ package wapc
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"time"
@@ -44,18 +43,18 @@ func dataSourceWapcModuleReadContext(ctx context.Context, d *schema.ResourceData
 	src := d.Get("filename").(string)
 	code, err := ioutil.ReadFile(src)
 	if err != nil {
-		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error reading WebAssembly code (%s): %w", src, err))}
+		return diag.Errorf("error reading WebAssembly code (%s): %s", src, err)
 	}
 
 	module, err := wapc.New(func(msg string) { log.Printf("%s", msg) }, code, wapc.NoOpHostCallHandler)
 	if err != nil {
-		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error compiling WebAssembly module: %w", err))}
+		return diag.Errorf("error compiling WebAssembly module: %s", err)
 	}
 	defer module.Close()
 
 	instance, err := module.Instantiate()
 	if err != nil {
-		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error instantiating WebAssembly module: %w", err))}
+		return diag.Errorf("error instantiating WebAssembly module: %s", err)
 	}
 	defer instance.Close()
 
@@ -63,7 +62,7 @@ func dataSourceWapcModuleReadContext(ctx context.Context, d *schema.ResourceData
 	payload := []byte(d.Get("input").(string))
 	result, err := instance.Invoke(ctx, operation, payload)
 	if err != nil {
-		return []diag.Diagnostic{diag.FromErr(fmt.Errorf("error invoking WebAssembly operation (%s): %w", operation, err))}
+		return diag.Errorf("error invoking WebAssembly operation (%s): %s", operation, err)
 	}
 
 	d.SetId(time.Now().UTC().String())
