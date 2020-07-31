@@ -3,7 +3,6 @@ package wapc
 import (
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -13,7 +12,6 @@ var testProviders = map[string]*schema.Provider{
 }
 
 func TestMain(m *testing.M) {
-	acctest.UseBinaryDriver("wapc", Provider)
 	resource.TestMain(m)
 }
 
