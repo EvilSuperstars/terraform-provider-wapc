@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 prost = "0.6.1"
+tonic = "0.3.0"
 
 [build-dependencies]
-prost-build = { version = "0.6.1" }
+tonic-build = "0.3.0"
