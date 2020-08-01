@@ -131,7 +131,7 @@ func (s *grpcProviderServer) ReadDataSource(ctx context.Context, req *tfplugin5.
 	var state *cty.Value
 	switch dsName {
 	case "wapc_module":
-		state, err = InvokeWapcModule(&config)
+		state, err = InvokeWapcModule(ctx, &config)
 		if err != nil {
 			return resp, err
 		}
