@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
-	"github.com/hashicorp/go-cty/cty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -30,46 +29,19 @@ func NewGRPCProviderServer() tfplugin5.ProviderServer {
 func (s *grpcProviderServer) GetSchema(ctx context.Context, req *tfplugin5.GetProviderSchema_Request) (*tfplugin5.GetProviderSchema_Response, error) {
 	log.Println("[DEBUG] Enter ProviderServer::GetSchema")
 
-	oType, err := cty.DynamicPseudoType.MarshalJSON()
+	configSchema, err := GetConfigSchema()
 	if err != nil {
 		return nil, err
 	}
 
-	sType, err := cty.String.MarshalJSON()
+	dsSchemas, err := GetDataSourceSchemas()
 	if err != nil {
 		return nil, err
 	}
 
 	resp := &tfplugin5.GetProviderSchema_Response{
-		DataSourceSchemas: map[string]*tfplugin5.Schema{
-			"wapc_module": {
-				Version: 1,
-				Block: &tfplugin5.Schema_Block{
-					Attributes: []*tfplugin5.Schema_Attribute{
-						{
-							Name:     "filename",
-							Type:     sType,
-							Required: true,
-						},
-						{
-							Name:     "operation",
-							Type:     sType,
-							Required: true,
-						},
-						{
-							Name:     "input",
-							Type:     oType,
-							Required: true,
-						},
-						{
-							Name:     "result",
-							Type:     oType,
-							Computed: true,
-						},
-					},
-				},
-			},
-		},
+		DataSourceSchemas: dsSchemas,
+		Provider: configSchema,
 	}
 
 	log.Println("[DEBUG] Exit ProviderServer::GetSchema")
