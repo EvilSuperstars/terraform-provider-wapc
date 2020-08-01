@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
+	"github.com/hashicorp/go-cty/cty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -118,8 +120,37 @@ func (s *grpcProviderServer) ImportResourceState(ctx context.Context, req *tfplu
 func (s *grpcProviderServer) ReadDataSource(ctx context.Context, req *tfplugin5.ReadDataSource_Request) (*tfplugin5.ReadDataSource_Response, error) {
 	log.Println("[DEBUG] Enter ProviderServer::ReadDataSource")
 
+	resp := &tfplugin5.ReadDataSource_Response{}
+
+	dsName := req.TypeName
+	config, err := UnmarshalDataSource(dsName, req.GetConfig().GetMsgpack())
+	if err != nil {
+		return resp, err
+	}
+
+	var state *cty.Value
+	switch dsName {
+	case "wapc_module":
+		state, err = InvokeWapcModule(&config)
+		if err != nil {
+			return resp, err
+		}
+
+	default:
+		return resp, fmt.Errorf("unknown data source name %s", dsName)
+	}
+
+	data, err := MarshalDataSource(dsName, state)
+	if err != nil {
+		return resp, err
+	}
+
+	resp.State = &tfplugin5.DynamicValue{
+		Msgpack: data,
+	}
+
 	log.Println("[DEBUG] Exit ProviderServer::ReadDataSource")
-	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::ReadDataSource not implemented")
+	return resp, nil
 }
 
 //////// Graceful Shutdown

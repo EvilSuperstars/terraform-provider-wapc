@@ -1,8 +1,11 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
 	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/go-cty/cty/msgpack"
 )
 
 // GetDataSourceSchemas returns this provider's configuration schema.
@@ -56,4 +59,52 @@ func GetDataSourceSchemas() (map[string]*tfplugin5.Schema, error) {
 			},
 		},
 	}, nil
+}
+
+// GetObjectTypeFromSchema returns a cty.Type that can wholly represent the schema input.
+func GetObjectTypeFromSchema(schema *tfplugin5.Schema) (cty.Type, error) {
+	bm := make(map[string]cty.Type)
+
+	for _, att := range schema.Block.Attributes {
+		var t cty.Type
+
+		err := t.UnmarshalJSON(att.Type)
+		if err != nil {
+			return cty.NilType, fmt.Errorf("failed to unmarshall type %s: %w", string(att.Type), err)
+		}
+
+		bm[att.Name] = t
+	}
+
+	return cty.Object(bm), nil
+}
+
+// MarshalDataSource marshals a cty.Value into a msgpack-ed data source.
+func MarshalDataSource(ds string, data *cty.Value) ([]byte, error) {
+	s, err := GetDataSourceSchemas()
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := GetObjectTypeFromSchema(s[ds])
+	if err != nil {
+		return nil, err
+	}
+
+	return msgpack.Marshal(*data, t)
+}
+
+// UnmarshalDataSource umarshals a msgpack-ed data source into its corresponding cty.Value.
+func UnmarshalDataSource(ds string, data []byte) (cty.Value, error) {
+	s, err := GetDataSourceSchemas()
+	if err != nil {
+		return cty.NilVal, err
+	}
+
+	t, err := GetObjectTypeFromSchema(s[ds])
+	if err != nil {
+		return cty.NilVal, err
+	}
+
+	return msgpack.Unmarshal(data, t)
 }
