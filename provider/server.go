@@ -31,20 +31,24 @@ func NewGRPCProviderServer() tfplugin5.ProviderServer {
 func (s *grpcProviderServer) GetSchema(ctx context.Context, req *tfplugin5.GetProviderSchema_Request) (*tfplugin5.GetProviderSchema_Response, error) {
 	log.Println("[DEBUG] Enter ProviderServer::GetSchema")
 
+	resp := &tfplugin5.GetProviderSchema_Response{}
+
 	configSchema, err := GetConfigSchema()
 	if err != nil {
-		return nil, err
+		resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
+		return resp, err
 	}
 
 	dsSchemas, err := GetDataSourceSchemas()
 	if err != nil {
-		return nil, err
+		resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
+		return resp, err
 	}
 
-	resp := &tfplugin5.GetProviderSchema_Response{
-		DataSourceSchemas: dsSchemas,
-		Provider: configSchema,
-	}
+	resp.DataSourceSchemas = dsSchemas
+	resp.Provider = configSchema
 
 	log.Println("[DEBUG] Exit ProviderServer::GetSchema")
 	return resp, nil
@@ -125,6 +129,8 @@ func (s *grpcProviderServer) ReadDataSource(ctx context.Context, req *tfplugin5.
 	dsName := req.TypeName
 	config, err := UnmarshalDataSource(dsName, req.GetConfig().GetMsgpack())
 	if err != nil {
+		resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
 		return resp, err
 	}
 
@@ -133,15 +139,21 @@ func (s *grpcProviderServer) ReadDataSource(ctx context.Context, req *tfplugin5.
 	case "wapc_module":
 		state, err = InvokeWapcModule(ctx, &config)
 		if err != nil {
+			resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
 			return resp, err
 		}
-
 	default:
-		return resp, fmt.Errorf("unknown data source name %s", dsName)
+		err = fmt.Errorf("unknown data source name %s", dsName)
+		resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
+		return resp, err
 	}
 
 	data, err := MarshalDataSource(dsName, state)
 	if err != nil {
+		resp.Diagnostics = appendDiagnostic(resp.Diagnostics, err)
+
 		return resp, err
 	}
 
@@ -163,4 +175,22 @@ func (s *grpcProviderServer) Stop(_ context.Context, _ *tfplugin5.Stop_Request) 
 
 	log.Println("[DEBUG] Exit ProviderServer::Stop")
 	return &tfplugin5.Stop_Response{}, nil
+}
+
+// appendDiagnostic appends an error or warning message to a response's diagnostics.
+func appendDiagnostic(diags []*tfplugin5.Diagnostic, d interface{}) []*tfplugin5.Diagnostic {
+	switch d := d.(type) {
+	case error:
+		diags = append(diags, &tfplugin5.Diagnostic{
+			Severity: tfplugin5.Diagnostic_ERROR,
+			Summary:  d.Error(),
+		})
+	case string:
+		diags = append(diags, &tfplugin5.Diagnostic{
+			Severity: tfplugin5.Diagnostic_WARNING,
+			Summary:  d,
+		})
+	}
+
+	return diags
 }
