@@ -10,3 +10,4 @@ readme = "README.md"
 crate-type = ["cdylib"]
 
 [dependencies]
+wapc-guest = "0.3.1"
