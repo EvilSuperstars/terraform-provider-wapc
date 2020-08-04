@@ -1,5 +1,5 @@
 TEST?="./provider"
-PKG_NAME=wapc
+PKG_NAME=provider
 
 default: build
 

@@ -12,7 +12,7 @@ import (
 func GetConfigSchema() (*tfplugin5.Schema, error) {
 	return &tfplugin5.Schema{
 		Version: 1,
-		Block:   &tfplugin5.Schema_Block{
+		Block: &tfplugin5.Schema_Block{
 			Attributes: []*tfplugin5.Schema_Attribute{},
 		},
 	}, nil

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/go-plugin"
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
+	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 )
 
