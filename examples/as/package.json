@@ -13,6 +13,7 @@
   "license": "Unlicense",
   "dependencies": {
     "@assemblyscript/loader": "^0.14.7",
+    "assemblyscript-json": "git+https://github.com/nearprotocol/assemblyscript-json.git#v0.3.2",
     "wapc-guest-as": "git+https://github.com/wapc/wapc-guest-as.git#v0.2.0"
   },
   "devDependencies": {
