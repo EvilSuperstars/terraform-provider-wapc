@@ -15,10 +15,9 @@ import (
 func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error) {
 	src := config.GetAttr("filename").AsString()
 	operation := config.GetAttr("operation").AsString()
-	inputValue := config.GetAttr("input")
-	input, err := ctyValueToJsonBytes(&inputValue)
+	input, err := ctyValueToJsonBytes(config.GetAttr("input"))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error marshaling input to JSON: %w", err)
 	}
 
 	log.Printf("[DEBUG] Reading WebAssembly module %s", src)
@@ -40,17 +39,33 @@ func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error
 	defer instance.Close()
 
 	log.Printf("[DEBUG] Invoking WebAssembly operation %s", operation)
-	_, err = instance.Invoke(ctx, operation, input)
+	result, err := instance.Invoke(ctx, operation, input)
 	if err != nil {
 		return nil, fmt.Errorf("error invoking WebAssembly operation (%s): %w", operation, err)
+	}
+
+	_, err = jsonBytesToCtyValue(result)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling result from JSON: %w", err)
 	}
 
 	return config, nil
 }
 
-// ctyValueToJsonBytes unmarshals a cty.Value into JSON bytes.
-func ctyValueToJsonBytes(value *cty.Value) ([]byte, error) {
-	simple := &ctyjson.SimpleJSONValue{Value: *value}
+// ctyValueToJsonBytes marshals a cty.Value into JSON bytes.
+func ctyValueToJsonBytes(value cty.Value) ([]byte, error) {
+	simple := &ctyjson.SimpleJSONValue{Value: value}
 
 	return simple.MarshalJSON()
+}
+
+// jsonBytesToCtyValue unmarshals JSON bytes into a cty.Value.
+func jsonBytesToCtyValue(buf []byte) (cty.Value, error) {
+	simple := &ctyjson.SimpleJSONValue{}
+	err := simple.UnmarshalJSON(buf)
+	if err != nil {
+		return cty.NilVal, err
+	}
+
+	return simple.Value, nil
 }
