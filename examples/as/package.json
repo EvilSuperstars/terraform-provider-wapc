@@ -12,7 +12,8 @@
   "author": "Kit Ewbank",
   "license": "Unlicense",
   "dependencies": {
-    "@assemblyscript/loader": "^0.14.7"
+    "@assemblyscript/loader": "^0.14.7",
+    "wapc-guest-as": "git+https://github.com/wapc/wapc-guest-as.git#v0.2.0"
   },
   "devDependencies": {
     "assemblyscript": "^0.14.7"
