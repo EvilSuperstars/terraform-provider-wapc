@@ -1,12 +1,9 @@
 package main
 
 import (
-	"github.com/EvilSuperstars/terraform-provider-wapc/wapc"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/EvilSuperstars/terraform-provider-wapc/provider"
 )
 
 func main() {
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: wapc.Provider,
-	})
+	provider.Serve()
 }

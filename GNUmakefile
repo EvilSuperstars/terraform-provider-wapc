@@ -1,6 +1,5 @@
-TEST?=./...
-GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-PKG_NAME=wapc
+TEST?="./provider"
+PKG_NAME=provider
 
 default: build
 
@@ -11,7 +10,7 @@ test:
 	go test $(TEST) -timeout=30s -parallel=4
 
 testacc:
-	TF_ACC=1 go test $(TEST) -v -parallel 20 $(TESTARGS) -timeout 120m
+	TF_ACC=1 go test $(ACCTEST) -v -parallel 20 $(TESTARGS) -timeout 120m
 
 fmt:
 	@echo "==> Fixing source code with gofmt..."
