@@ -38,5 +38,5 @@ function hello(payload: ArrayBuffer): ArrayBuffer {
   consoleLog("[DEBUG] " + input);
 
   consoleLog("[DEBUG] Exit hello");
-  return String.UTF8.encode("\"Hello\"");
+  return String.UTF8.encode(JSON.from("Hello").toString());
 }
