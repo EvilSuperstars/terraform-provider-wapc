@@ -26,13 +26,6 @@ $ cd $HOME/development/EvilSuperstars/terraform-provider-wapc
 $ make build
 ```
 
-Run acceptance tests
-
-```sh
-$ cd $HOME/development/EvilSuperstars/terraform-provider-wapc
-$ make testacc TEST=./wapc/ TESTARGS='-run=TestDataSourceWapcModule_'
-```
-
 Using The Provider
 ------------------
 
