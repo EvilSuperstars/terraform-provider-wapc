@@ -1,4 +1,4 @@
-package wapc
+package provider
 
 import (
 	"fmt"
