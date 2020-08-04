@@ -44,12 +44,22 @@ func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error
 		return nil, fmt.Errorf("error invoking WebAssembly operation (%s): %w", operation, err)
 	}
 
-	_, err = jsonBytesToCtyValue(result)
+	resultValue, err := jsonBytesToCtyValue(result)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshaling result from JSON: %w", err)
 	}
 
-	return config, nil
+	state := map[string]cty.Value{
+		"filename": config.GetAttr("filename"),
+		"operation": config.GetAttr("operation"),
+		"input": config.GetAttr("input"),
+	}
+	if !resultValue.IsNull() {
+		state["result"] = resultValue
+	}
+	stateValue := cty.ObjectVal(state)
+
+	return &stateValue, nil
 }
 
 // ctyValueToJsonBytes marshals a cty.Value into JSON bytes.
