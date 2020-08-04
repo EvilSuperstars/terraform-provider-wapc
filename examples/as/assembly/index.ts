@@ -1,5 +1,7 @@
 // waPC guest package.
-import {consoleLog, handleAbort, handleCall, register} from "wapc-guest-as";
+import { consoleLog, handleAbort, handleCall, register } from "wapc-guest-as";
+
+import { JSON } from "assemblyscript-json";
 
 // This must be present in the entry file to be exported from the Wasm module.
 // It's invoked by the waPC host.
@@ -23,6 +25,15 @@ function hello(payload: ArrayBuffer): ArrayBuffer {
   consoleLog("[DEBUG] Enter hello");
 
   const input = String.UTF8.decode(payload);
+  let jsonObj: JSON.Value = JSON.parse(input);
+
+  if (jsonObj instanceof JSON.Arr) {
+    consoleLog("[DEBUG] JSON.Arr");
+  } else if (jsonObj instanceof JSON.Str) {
+    consoleLog("[DEBUG] JSON.Str");
+  } else {
+    consoleLog("[DEBUG] Unknown");
+  }
 
   consoleLog("[DEBUG] " + input);
 
