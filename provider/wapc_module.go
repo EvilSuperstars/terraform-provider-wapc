@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/go-cty/cty"
-	"github.com/hashicorp/go-cty/cty/msgpack"
+	ctyjson "github.com/hashicorp/go-cty/cty/json"
 	"github.com/wapc/wapc-go"
 )
 
@@ -15,14 +15,16 @@ import (
 func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error) {
 	src := config.GetAttr("filename").AsString()
 	operation := config.GetAttr("operation").AsString()
-	input, err := msgpack.Marshal(config.GetAttr("input"), cty.DynamicPseudoType)
+	inputValue := config.GetAttr("input")
+	input, err := ctyValueToJsonBytes(&inputValue)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("[DEBUG] Reading WebAssembly module %s", src)
 	code, err := ioutil.ReadFile(src)
 	if err != nil {
-		return nil, fmt.Errorf("error reading WebAssembly code (%s): %w", src, err)
+		return nil, fmt.Errorf("error reading WebAssembly module (%s): %w", src, err)
 	}
 
 	module, err := wapc.New(func(msg string) { log.Printf("%s", msg) }, code, wapc.NoOpHostCallHandler)
@@ -37,10 +39,18 @@ func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error
 	}
 	defer instance.Close()
 
+	log.Printf("[DEBUG] Invoking WebAssembly operation %s", operation)
 	_, err = instance.Invoke(ctx, operation, input)
 	if err != nil {
 		return nil, fmt.Errorf("error invoking WebAssembly operation (%s): %w", operation, err)
 	}
 
 	return config, nil
+}
+
+// ctyValueToJsonBytes unmarshals a cty.Value into JSON bytes.
+func ctyValueToJsonBytes(value *cty.Value) ([]byte, error) {
+	simple := &ctyjson.SimpleJSONValue{Value: *value}
+
+	return simple.MarshalJSON()
 }
