@@ -49,19 +49,14 @@ func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error
 		return nil, fmt.Errorf("error unmarshaling result from JSON: %w", err)
 	}
 
-	state := map[string]cty.Value{
+	state := cty.ObjectVal(map[string]cty.Value{
 		"filename":  config.GetAttr("filename"),
 		"operation": config.GetAttr("operation"),
 		"input":     config.GetAttr("input"),
-	}
-	if resultValue.IsNull() {
-		state["result"] = cty.EmptyObjectVal
-	} else {
-		state["result"] = resultValue
-	}
-	stateValue := cty.ObjectVal(state)
+		"result":    resultValue,
+	})
 
-	return &stateValue, nil
+	return &state, nil
 }
 
 // ctyValueToJsonBytes marshals a cty.Value into JSON bytes.
@@ -74,7 +69,7 @@ func ctyValueToJsonBytes(value cty.Value) ([]byte, error) {
 // jsonBytesToCtyValue unmarshals JSON bytes into a cty.Value.
 func jsonBytesToCtyValue(buf []byte) (cty.Value, error) {
 	if len(buf) == 0 {
-		return cty.NilVal, nil
+		return cty.NullVal(cty.DynamicPseudoType), nil
 	}
 
 	simple := &ctyjson.SimpleJSONValue{}

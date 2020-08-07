@@ -4,7 +4,6 @@
   "description": "Example AssemblyScript module for use with the Terraform waPC provider",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/index.js",
     "asbuild:untouched": "asc assembly/index.ts --sourceMap --target debug --use abort=assembly/index/abort --binaryFile build/untouched.wasm --textFile build/untouched.wat",
     "asbuild:optimized": "asc assembly/index.ts --sourceMap --target release --use abort=assembly/index/abort --binaryFile build/optimized.wasm --textFile build/optimized.wat",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"

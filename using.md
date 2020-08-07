@@ -27,7 +27,7 @@ The following arguments are supported:
 
 * `filename` - (Required, string) The filename of the waPC-compliant WebAssembly module.
 * `operation` - (Required, string) The name of the operation to invoke.
-* `input` - (Required, any) The operation's input.
+* `input` - (Optional, any) The operation's input.
 
 #### Attributes Reference
 

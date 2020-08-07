@@ -48,7 +48,7 @@ func GetDataSourceSchemas() (map[string]*tfplugin5.Schema, error) {
 					{
 						Name:     "input",
 						Type:     oType,
-						Required: true,
+						Optional: true,
 					},
 					{
 						Name:     "result",
