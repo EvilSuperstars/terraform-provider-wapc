@@ -30,7 +30,8 @@ func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error
 	if err != nil {
 		return nil, fmt.Errorf("error compiling WebAssembly module: %w", err)
 	}
-	// func(msg string) { log.Printf("%s", msg) },
+	module.SetLogger(func(msg string) { log.Println(msg) })
+	module.SetWriter(func(msg string) { log.Print(msg) })
 	defer module.Close()
 
 	instance, err := module.Instantiate()
