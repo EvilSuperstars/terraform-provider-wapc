@@ -4,13 +4,9 @@ use guest::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-wapc_handler!(handle_wapc);
-
-fn handle_wapc(operation: &str, msg: &[u8]) -> CallResult {
-    match operation {
-        "hello" => hello(msg),
-        op => Err(format!("unknown operation {}", op).into()),
-    }
+#[no_mangle]
+pub extern "C" fn wapc_init() {
+  register_function("hello", hello);
 }
 
 //
