@@ -37,7 +37,7 @@ github.com/pkg/errors
 ## explicit
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
-# github.com/wapc/wapc-go v0.1.0
+# github.com/wapc/wapc-go v0.2.1
 ## explicit
 github.com/wapc/wapc-go
 # github.com/wasmerio/go-ext-wasm v0.3.1
