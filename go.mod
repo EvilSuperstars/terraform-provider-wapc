@@ -8,6 +8,7 @@ require (
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
 	github.com/hashicorp/go-plugin v1.3.0
 	github.com/hashicorp/terraform-plugin-go v0.2.0 // indirect
+	github.com/hashicorp/terraform-plugin-mux v0.1.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/mitchellh/go-testing-interface v1.0.4 // indirect
 	github.com/wapc/wapc-go v0.2.1
