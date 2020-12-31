@@ -7,9 +7,14 @@ import (
 
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
 	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+func Server() tfprotov5.ProviderServer {
+	return nil
+}
 
 // grpcProviderServer implements the Protobuf ProviderServer interface.
 type grpcProviderServer struct {
