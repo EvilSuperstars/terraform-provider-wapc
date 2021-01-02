@@ -75,7 +75,7 @@ func Server() tfprotov5.ProviderServer {
 			},
 		},
 		dataSourceRouter: dataSourceRouter{
-			"wapc_module": dataSourceWapc{},
+			"wapc_module": dataSourceWapcModule{},
 		},
 	}
 }
