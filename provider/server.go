@@ -12,8 +12,127 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type server struct {
+}
+
+//
+// tfprotov5.ProviderServer interface methods.
+//
+
+// GetProviderSchema is called when Terraform needs to know what the provider's schema is,
+// along with the schemas of all its resources and data sources.
+func (s *server) GetProviderSchema(ctx context.Context, req *tfprotov5.GetProviderSchemaRequest) (*tfprotov5.GetProviderSchemaResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::GetProviderSchema")
+
+	log.Println("[DEBUG] Exit ProviderServer::GetProviderSchema")
+	return nil, nil
+}
+
+// PrepareProviderConfig is called to give a provider a chance to modify the configuration the user specified before validation.
+func (s *server) PrepareProviderConfig(ctx context.Context, req *tfprotov5.PrepareProviderConfigRequest) (*tfprotov5.PrepareProviderConfigResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::PrepareProviderConfig")
+
+	log.Println("[DEBUG] Exit ProviderServer::PrepareProviderConfig")
+	return &tfprotov5.PrepareProviderConfigResponse{PreparedConfig: req.Config}, nil
+}
+
+// ConfigureProvider is called to pass the user-specified provider configuration to the provider.
+func (s *server) ConfigureProvider(ctx context.Context, req *tfprotov5.ConfigureProviderRequest) (*tfprotov5.ConfigureProviderResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ConfigureProvider")
+
+	log.Println("[DEBUG] Exit ProviderServer::ConfigureProvider")
+	return nil, nil
+}
+
+// StopProvider is called when Terraform would like providers to shut down as quickly as possible, and usually represents an interrupt.
+func (s *server) StopProvider(ctx context.Context, req *tfprotov5.StopProviderRequest) (*tfprotov5.StopProviderResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::StopProvider")
+
+	log.Println("[DEBUG] Exit ProviderServer::StopProvider")
+	return &tfprotov5.StopProviderResponse{}, nil
+}
+
+//
+// tfprotov5.ResourceServer interface methods.
+//
+
+// ValidateResourceTypeConfig is called when Terraform is checking that a resource's configuration is valid.
+// It is guaranteed to have types conforming to your schema.
+// This is your opportunity to do custom or advanced validation prior to a plan being generated.
+func (s *server) ValidateResourceTypeConfig(ctx context.Context, req *tfprotov5.ValidateResourceTypeConfigRequest) (*tfprotov5.ValidateResourceTypeConfigResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ValidateResourceTypeConfig")
+
+	log.Println("[DEBUG] Exit ProviderServer::ValidateResourceTypeConfig")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::ValidateResourceTypeConfig not implemented")
+}
+
+// UpgradeResourceState is called when Terraform has encountered a esource with a state in a schema that doesn't match the schema's current version.
+// It is the provider's responsibility to modify the state to upgrade it to the latest state schema.
+func (s *server) UpgradeResourceState(ctx context.Context, req *tfprotov5.UpgradeResourceStateRequest) (*tfprotov5.UpgradeResourceStateResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::UpgradeResourceState")
+
+	log.Println("[DEBUG] Exit ProviderServer::UpgradeResourceState")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::UpgradeResourceState not implemented")
+}
+
+// ReadResource is called when Terraform is refreshing a resource's state.
+func (s *server) ReadResource(ctx context.Context, req *tfprotov5.ReadResourceRequest) (*tfprotov5.ReadResourceResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ReadResource")
+
+	log.Println("[DEBUG] Exit ProviderServer::ReadResource")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::ReadResource not implemented")
+}
+
+// PlanResourceChange is called when Terraform is attempting to calculate a plan for a resource.
+// Terraform will suggest a proposed new state, which the provider can modify or return unmodified to influence Terraform's plan.
+func (s *server) PlanResourceChange(ctx context.Context, req *tfprotov5.PlanResourceChangeRequest) (*tfprotov5.PlanResourceChangeResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::PlanResourceChange")
+
+	log.Println("[DEBUG] Exit ProviderServer::PlanResourceChange")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::PlanResourceChange not implemented")
+}
+
+// ApplyResourceChange is called when Terraform has detected a diff between the resource's state and the user's config, and the user has approved a planned change.
+// The provider is to apply the changes contained in the plan, and return the resulting state.
+func (s *server) ApplyResourceChange(ctx context.Context, req *tfprotov5.ApplyResourceChangeRequest) (*tfprotov5.ApplyResourceChangeResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ApplyResourceChange")
+
+	log.Println("[DEBUG] Exit ProviderServer::ApplyResourceChange")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::ApplyResourceChange not implemented")
+}
+
+// ImportResourceState is called when a user has requested Terraform import a resource.
+// The provider should fetch the information  specified by the passed ID and return it as one or more resource states for Terraform to assume control of.
+func (s *server) ImportResourceState(ctx context.Context, req *tfprotov5.ImportResourceStateRequest) (*tfprotov5.ImportResourceStateResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ImportResourceState")
+
+	log.Println("[DEBUG] Exit ProviderServer::ImportResourceState")
+	return nil, status.Errorf(codes.Unimplemented, "ProviderServer::ImportResourceState not implemented")
+}
+
+//
+// tfprotov5.DataSourceServer interface methods.
+//
+
+// ValidateDataSourceConfig is called when Terraform is checking that a data source's configuration is valid.
+// It is guaranteed to have types conforming to your schema, but it is not guaranteed that all values will be known.
+// This is your opportunity to do custom or advanced validation prior to a plan being generated.
+func (s *server) ValidateDataSourceConfig(ctx context.Context, req *tfprotov5.ValidateDataSourceConfigRequest) (*tfprotov5.ValidateDataSourceConfigResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ValidateDataSourceConfig")
+
+	log.Println("[DEBUG] Exit ProviderServer::ValidateDataSourceConfig")
+	return &tfprotov5.ValidateDataSourceConfigResponse{}, nil
+}
+
+func (s *server) ReadDataSource(ctx context.Context, req *tfprotov5.ReadDataSourceRequest) (*tfprotov5.ReadDataSourceResponse, error) {
+	log.Println("[DEBUG] Enter ProviderServer::ReadDataSource")
+
+	log.Println("[DEBUG] Exit ProviderServer::ReadDataSource")
+	return nil, nil
+}
+
 func Server() tfprotov5.ProviderServer {
-	return nil
+	return &server{}
 }
 
 // grpcProviderServer implements the Protobuf ProviderServer interface.
