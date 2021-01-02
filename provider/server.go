@@ -32,7 +32,12 @@ func (s *server) GetProviderSchema(ctx context.Context, req *tfprotov5.GetProvid
 	log.Println("[DEBUG] Enter ProviderServer::GetProviderSchema")
 	defer log.Println("[DEBUG] Exit ProviderServer::GetProviderSchema")
 
-	return nil, nil
+	return &tfprotov5.GetProviderSchemaResponse{
+		Provider:          s.providerSchema,
+		ProviderMeta:      s.providerMetaSchema,
+		ResourceSchemas:   s.resourceSchemas,
+		DataSourceSchemas: s.dataSourceSchemas,
+	}, nil
 }
 
 // PrepareProviderConfig is called to give a provider a chance to modify the configuration the user specified before validation.
@@ -40,7 +45,9 @@ func (s *server) PrepareProviderConfig(ctx context.Context, req *tfprotov5.Prepa
 	log.Println("[DEBUG] Enter ProviderServer::PrepareProviderConfig")
 	defer log.Println("[DEBUG] Exit ProviderServer::PrepareProviderConfig")
 
-	return &tfprotov5.PrepareProviderConfigResponse{PreparedConfig: req.Config}, nil
+	return &tfprotov5.PrepareProviderConfigResponse{
+		PreparedConfig: req.Config,
+	}, nil
 }
 
 // ConfigureProvider is called to pass the user-specified provider configuration to the provider.
@@ -48,7 +55,7 @@ func (s *server) ConfigureProvider(ctx context.Context, req *tfprotov5.Configure
 	log.Println("[DEBUG] Enter ProviderServer::ConfigureProvider")
 	defer log.Println("[DEBUG] Exit ProviderServer::ConfigureProvider")
 
-	return nil, nil
+	return &tfprotov5.ConfigureProviderResponse{}, nil
 }
 
 // StopProvider is called when Terraform would like providers to shut down as quickly as possible, and usually represents an interrupt.
@@ -60,7 +67,17 @@ func (s *server) StopProvider(ctx context.Context, req *tfprotov5.StopProviderRe
 }
 
 func Server() tfprotov5.ProviderServer {
-	return &server{}
+	return &server{
+		providerSchema: &tfprotov5.Schema{
+			Version: 1,
+			Block: &tfprotov5.SchemaBlock{
+				Version: 1,
+			},
+		},
+		dataSourceRouter: dataSourceRouter{
+			"wapc_module": dataSourceWapc{},
+		},
+	}
 }
 
 // grpcProviderServer implements the Protobuf ProviderServer interface.
