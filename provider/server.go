@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tftypes"
 )
 
 type server struct {
@@ -72,42 +71,7 @@ func Server() tfprotov5.ProviderServer {
 			},
 		},
 		dataSourceSchemas: map[string]*tfprotov5.Schema{
-			"wapc_module": {
-				Version: 1,
-				Block: &tfprotov5.SchemaBlock{
-					Version: 1,
-					Attributes: []*tfprotov5.SchemaAttribute{
-						{
-							Name:            "filename",
-							Type:            tftypes.String,
-							Description:     "The filename of the waPC-compliant WebAssembly module.",
-							DescriptionKind: tfprotov5.StringKindPlain,
-							Required:        true,
-						},
-						{
-							Name:            "operation",
-							Type:            tftypes.String,
-							Description:     "The name of the operation to invoke.",
-							DescriptionKind: tfprotov5.StringKindPlain,
-							Required:        true,
-						},
-						{
-							Name:            "input",
-							Type:            tftypes.DynamicPseudoType,
-							Description:     "The operation's input.",
-							DescriptionKind: tfprotov5.StringKindPlain,
-							Required:        true,
-						},
-						{
-							Name:            "result",
-							Type:            tftypes.DynamicPseudoType,
-							Description:     "The operation's result.",
-							DescriptionKind: tfprotov5.StringKindPlain,
-							Computed:        true,
-						},
-					},
-				},
-			},
+			"wapc_module": dataSourceWapcModuleSchema(),
 		},
 		dataSourceRouter: dataSourceRouter{
 			"wapc_module": dataSourceWapcModule{},
