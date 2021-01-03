@@ -11,6 +11,34 @@ import (
 	"github.com/wapc/wapc-go"
 )
 
+type WapcModule struct {
+	module *wapc.Module
+}
+
+// NewWapcModule creates a new waPC module from the specified WebAssembly module file.
+func NewWapcModule(filename string) (*WapcModule, error) {
+	log.Printf("[DEBUG] Reading WebAssembly module %s", filename)
+	code, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("error reading WebAssembly module (%s): %w", filename, err)
+	}
+
+	module, err := wapc.New(code, wapc.NoOpHostCallHandler)
+	if err != nil {
+		return nil, fmt.Errorf("error compiling WebAssembly module: %w", err)
+	}
+
+	module.SetLogger(func(msg string) { log.Println(msg) })
+	module.SetWriter(func(msg string) { log.Print(msg) })
+
+	return &WapcModule{module: module}, nil
+}
+
+// Invoke invokes the specified operation on a waPC module.
+func (m *WapcModule) Invoke(ctx context.Context, operation string) error {
+	return nil
+}
+
 // InvokeWapcModule invokes a waPC module.
 func InvokeWapcModule(ctx context.Context, config *cty.Value) (*cty.Value, error) {
 	src := config.GetAttr("filename").AsString()

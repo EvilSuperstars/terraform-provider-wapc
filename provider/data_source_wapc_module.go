@@ -30,7 +30,7 @@ func (d dataSourceWapcModule) ReadDataSource(ctx context.Context, req *tfprotov5
 	log.Println("[DEBUG] Enter DataSourceWapcModule::ReadDataSource")
 	defer log.Println("[DEBUG] Exit DataSourceWapcModule::ReadDataSource")
 
-	_, err := req.Config.Unmarshal(tftypes.Object{})
+	config, err := req.Config.Unmarshal(tftypes.Object{})
 	if err != nil {
 		return &tfprotov5.ReadDataSourceResponse{
 			Diagnostics: []*tfprotov5.Diagnostic{
@@ -38,6 +38,34 @@ func (d dataSourceWapcModule) ReadDataSource(ctx context.Context, req *tfprotov5
 					Severity: tfprotov5.DiagnosticSeverityError,
 					Summary:  "Error unmarshaling config",
 					Detail:   fmt.Sprintf("Error unmarshaling config: %s", err.Error()),
+				},
+			},
+		}, nil
+	}
+
+	filename, _, err := tftypes.WalkAttributePath(config, tftypes.AttributePath {
+		Steps: []tftypes.AttributePathStep{tftypes.AttributeName("filename")},
+	})
+	if err != nil {
+		return &tfprotov5.ReadDataSourceResponse{
+			Diagnostics: []*tfprotov5.Diagnostic{
+				{
+					Severity: tfprotov5.DiagnosticSeverityError,
+					Summary:  "Error getting filename",
+					Detail:   fmt.Sprintf("Error getting filename: %s", err.Error()),
+				},
+			},
+		}, nil
+	}
+
+	_, err = NewWapcModule(filename.(string))
+	if err != nil {
+		return &tfprotov5.ReadDataSourceResponse{
+			Diagnostics: []*tfprotov5.Diagnostic{
+				{
+					Severity: tfprotov5.DiagnosticSeverityError,
+					Summary:  "Error creating waPC module",
+					Detail:   fmt.Sprintf("Error creating waPC module: %s", err.Error()),
 				},
 			},
 		}, nil
