@@ -8,6 +8,7 @@ import (
 	"github.com/EvilSuperstars/terraform-provider-wapc/tfplugin5"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tftypes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -72,6 +73,44 @@ func Server() tfprotov5.ProviderServer {
 			Version: 1,
 			Block: &tfprotov5.SchemaBlock{
 				Version: 1,
+			},
+		},
+		dataSourceSchemas: map[string]*tfprotov5.Schema{
+			"wapc_module": {
+				Version: 1,
+				Block: &tfprotov5.SchemaBlock{
+					Version: 1,
+					Attributes: []*tfprotov5.SchemaAttribute{
+						{
+							Name:            "filename",
+							Type:            tftypes.String,
+							Description:     "The filename of the waPC-compliant WebAssembly module.",
+							DescriptionKind: tfprotov5.StringKindPlain,
+							Required:        true,
+						},
+						{
+							Name:            "operation",
+							Type:            tftypes.String,
+							Description:     "The name of the operation to invoke.",
+							DescriptionKind: tfprotov5.StringKindPlain,
+							Required:        true,
+						},
+						{
+							Name:            "input",
+							Type:            tftypes.DynamicPseudoType,
+							Description:     "The operation's input.",
+							DescriptionKind: tfprotov5.StringKindPlain,
+							Required:        true,
+						},
+						{
+							Name:            "result",
+							Type:            tftypes.DynamicPseudoType,
+							Description:     "The operation's result.",
+							DescriptionKind: tfprotov5.StringKindPlain,
+							Computed:        true,
+						},
+					},
+				},
 			},
 		},
 		dataSourceRouter: dataSourceRouter{

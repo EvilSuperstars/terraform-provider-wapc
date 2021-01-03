@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tftypes"
 )
 
 type dataSourceWapcModule struct{}
@@ -27,6 +29,19 @@ func (d dataSourceWapcModule) ValidateDataSourceConfig(ctx context.Context, req 
 func (d dataSourceWapcModule) ReadDataSource(ctx context.Context, req *tfprotov5.ReadDataSourceRequest) (*tfprotov5.ReadDataSourceResponse, error) {
 	log.Println("[DEBUG] Enter DataSourceWapcModule::ReadDataSource")
 	defer log.Println("[DEBUG] Exit DataSourceWapcModule::ReadDataSource")
+
+	_, err := req.Config.Unmarshal(tftypes.Object{})
+	if err != nil {
+		return &tfprotov5.ReadDataSourceResponse{
+			Diagnostics: []*tfprotov5.Diagnostic{
+				{
+					Severity: tfprotov5.DiagnosticSeverityError,
+					Summary:  "Error unmarshaling config",
+					Detail:   fmt.Sprintf("Error unmarshaling config: %s", err.Error()),
+				},
+			},
+		}, nil
+	}
 
 	return nil, nil
 }
