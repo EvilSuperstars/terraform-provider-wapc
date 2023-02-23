@@ -11,9 +11,7 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.4 // indirect
 	github.com/vmihailenco/msgpack v4.0.1+incompatible // indirect
 	github.com/wapc/wapc-go v0.2.1
-	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
-	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
-	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/text v0.3.8 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/genproto v0.0.0-20200711021454-869866162049 // indirect
 	google.golang.org/grpc v1.30.0
