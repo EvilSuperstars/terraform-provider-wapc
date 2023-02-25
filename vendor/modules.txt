@@ -42,7 +42,7 @@ github.com/vmihailenco/msgpack/codes
 github.com/wapc/wapc-go
 # github.com/wasmerio/go-ext-wasm v0.3.1
 github.com/wasmerio/go-ext-wasm/wasmer
-# golang.org/x/net v0.0.0-20200707034311-ab3426394381
+# golang.org/x/net v0.7.0
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -51,12 +51,9 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20200523222454-059865788121
-## explicit
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.5.0
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.3
-## explicit
+# golang.org/x/text v0.7.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
